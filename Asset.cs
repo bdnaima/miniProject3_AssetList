@@ -1,36 +1,37 @@
 // Asset.cs
 
-abstract class Asset {
+public abstract class Asset
+{
     // Properties
     public int AssetId { get; set; }
+    public string Type { get; set; } = "";
 
-    public string Type { get; set; }
+    public string Brand { get; set; } = "";
 
-    public string Brand { get; set; }
-
-    public string Model { get; set; }
+    public string Model { get; set; } = "";
 
     public DateTime PurchaseDate { get; set; }
 
     public double PriceUSD { get; set; }
 
-    public string Office { get; set; }
+    public string Office { get; set; } = "";
 
-    public string Currency { get; set; }
+    public string Currency { get; set; } = "";
 
 
     // Constructor
-    public Asset( 
-            int assetId, 
-            string type, 
-            string brand, 
-            string model, 
+    protected Asset()
+    {
+    }
+    protected Asset(
+            string type,
+            string brand,
+            string model,
             DateTime purchaseDate,
-            double priceUSD, 
-            string office) 
-    
-        {
-        AssetId = assetId;
+            double priceUSD,
+            string office)
+
+    {
         Type = type;
         Brand = brand;
         Model = model;
@@ -39,7 +40,8 @@ abstract class Asset {
         Office = office;
 
         // Set currency depending on office
-        switch (Office) {
+        switch (Office)
+        {
             case "Sweden":
                 Currency = "SEK";
                 break;
@@ -56,7 +58,8 @@ abstract class Asset {
 
 
     // Convert USD to local currency
-    public double GetLocalPrice() {
+    public double GetLocalPrice()
+    {
         switch (Currency)
         {
             case "SEK":
@@ -77,33 +80,39 @@ abstract class Asset {
         return DateTime.Now.Year - PurchaseDate.Year;
     }
 
-    public string Status {
+    public string Status
+    {
         get => GetStatus();
     }
     // End-of-life status
-    public string GetStatus() {
+    public string GetStatus()
+    {
         DateTime endOfLife = PurchaseDate.AddYears(3);
 
         double daysLeft = (endOfLife - DateTime.Now).TotalDays;
 
-    // Less than 3 months left
-    if (daysLeft < 90) {
-        return "RED";
-    }
+        // Less than 3 months left
+        if (daysLeft < 90)
+        {
+            return "RED";
+        }
 
-    // Less than 6 months left
-    else if (daysLeft < 180) {
-        return "YELLOW";
-    }
+        // Less than 6 months left
+        else if (daysLeft < 180)
+        {
+            return "YELLOW";
+        }
 
-    else {
-        return "OK";
+        else
+        {
+            return "OK";
+        }
     }
-}
 
 
     // Print asset
-    public override string ToString() {
+    public override string ToString()
+    {
         return
             $"{AssetId.ToString().PadRight(6)}" +
             $"{Type.PadRight(15)}" +
@@ -118,16 +127,20 @@ abstract class Asset {
 
 
     // Show all assets
-    public static void ShowAllAssets(List<Asset> assets) {
+    public static void ShowAllAssets(List<Asset> assets)
+    {
         foreach (Asset asset in assets)
         {
-            if (asset.Status == "RED") {
+            if (asset.Status == "RED")
+            {
                 Console.ForegroundColor = ConsoleColor.Red;
             }
-            else if (asset.Status == "YELLOW") {
+            else if (asset.Status == "YELLOW")
+            {
                 Console.ForegroundColor = ConsoleColor.Yellow;
             }
-            else {
+            else
+            {
                 Console.ForegroundColor = ConsoleColor.White;
             }
 
@@ -138,45 +151,48 @@ abstract class Asset {
     }
 }
 
-class Computer : Asset {
+public class Computer : Asset
+{
+    public Computer()
+    {
+    }
+
     public Computer(
-        int assetId,
         string brand,
         string model,
         DateTime purchaseDate,
         double priceUSD,
         string office)
-
         : base(
-            assetId,
             "Computer",
             brand,
             model,
             purchaseDate,
             priceUSD,
             office)
-        {
+    {
     }
 }
 
-class MobilePhone : Asset
+public class MobilePhone : Asset
 {
+    public MobilePhone()
+    {
+    }
+
     public MobilePhone(
-        int assetId,
         string brand,
         string model,
         DateTime purchaseDate,
         double priceUSD,
         string office)
-
         : base(
-            assetId,
             "Mobile Phone",
             brand,
             model,
             purchaseDate,
             priceUSD,
             office)
-        {
+    {
     }
 }

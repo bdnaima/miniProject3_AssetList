@@ -9,6 +9,7 @@ obj/
 # Ignore lock files
 project.lock.json
 project.nuget.cache
+appsettings.json
 
 # Ignore other temporary files
 *.log
