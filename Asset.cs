@@ -1,5 +1,4 @@
 // Asset.cs
-
 public abstract class Asset
 {
     // Properties

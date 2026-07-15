@@ -1,61 +1,93 @@
 ﻿// Program.cs
 using var context = new MyDbContext();
 
-context.Assets.Add(new Computer(
-    "Apple",
-    "MacBook Pro",
-    new DateTime(2022, 3, 15),
-    1500,
-    "Sweden",
-    "SN123456",
-    new DateTime(2025, 3, 15),
-    "Alice"));
+bool running = true;
 
-context.Assets.Add(new Computer(
-    "Lenovo",
-    "ThinkPad X1",
-    new DateTime(2023, 11, 1),
-    1200,
-    "USA",
-    "SN654321",
-    new DateTime(2026, 11, 1),
-    "Bob"));
+while (running)
+{
+    Console.WriteLine();
+    Console.WriteLine("Smart Asset Tracking System");
+    Console.WriteLine("--------------------------");
+    Console.WriteLine("1. Show all assets");
+    Console.WriteLine("2. Add asset");
+    Console.WriteLine("3. Update asset");
+    Console.WriteLine("4. Delete asset");
+    Console.WriteLine("5. Exit");
 
-context.Assets.Add(new MobilePhone(
-    "Samsung",
-    "Galaxy S23",
-    new DateTime(2025, 1, 1),
-    900,
-    "Turkey",
-    "SN987654",
-    new DateTime(2028, 1, 1),
-    "Charlie"));
+    Console.Write("Choose option: ");
 
-context.SaveChanges();
+    string? choice = Console.ReadLine();
 
-Console.WriteLine("Asset List");
-Console.WriteLine("------------------------------------------------------------------------------------------------");
+    switch (choice)
+    {
+        case "1":
+            ShowAssets(context);
+            break;
 
-Console.Write("ID".PadRight(6));
-Console.Write("Type".PadRight(15));
-Console.Write("Brand".PadRight(15));
-Console.Write("Model".PadRight(20));
-Console.Write("Office".PadRight(12));
-Console.Write("Price".PadRight(18));
-Console.Write("Purchase Date".PadRight(18));
-Console.Write("Age".PadRight(8));
-Console.Write("Status".PadRight(10));
-Console.Write("Serial".PadRight(15));
-Console.Write("Employee".PadRight(20));
-Console.Write("Warranty".PadRight(15));
+        case "2":
+            AddAsset(context);
+            break;
 
-Console.WriteLine();
-Console.WriteLine("------------------------------------------------------------------------------------------------");
+        case "3":
+            UpdateAsset(context);
+            break;
+
+        case "4":
+            DeleteAsset(context);
+            break;
+
+        case "5":
+            running = false;
+            break;
+
+        default:
+            Console.WriteLine("Invalid choice");
+            break;
+    }
+}
+
+static void ShowAssets(MyDbContext context)
+{
+    Console.WriteLine();
+    Console.WriteLine("Asset List");
+    Console.WriteLine("------------------------------------------------------------------------------------------------");
+
+    Console.Write("ID".PadRight(6));
+    Console.Write("Type".PadRight(15));
+    Console.Write("Brand".PadRight(15));
+    Console.Write("Model".PadRight(20));
+    Console.Write("Office".PadRight(12));
+    Console.Write("Price".PadRight(18));
+    Console.Write("Purchase Date".PadRight(18));
+    Console.Write("Age".PadRight(8));
+    Console.Write("Status".PadRight(10));
+    Console.Write("Serial".PadRight(15));
+    Console.Write("Employee".PadRight(20));
+    Console.Write("Warranty".PadRight(15));
+
+    Console.WriteLine();
+    Console.WriteLine("------------------------------------------------------------------------------------------------");
 
 
-var assets = context.Assets
-    .OrderBy(a => a.Office)
-    .ThenBy(a => a.PurchaseDate)
-    .ToList();
+    var assets = context.Assets
+        .OrderBy(a => a.Office)
+        .ThenBy(a => a.PurchaseDate)
+        .ToList();
 
-Asset.ShowAllAssets(assets);
+    Asset.ShowAllAssets(assets);
+}
+
+static void AddAsset(MyDbContext context)
+{
+    Console.WriteLine("Add asset selected");
+}
+
+static void UpdateAsset(MyDbContext context)
+{
+    Console.WriteLine("Update asset selected");
+}
+
+static void DeleteAsset(MyDbContext context)
+{
+    Console.WriteLine("Delete asset selected");
+}
