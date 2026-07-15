@@ -4,6 +4,7 @@ public abstract class Asset
 {
     // Properties
     public int AssetId { get; set; }
+
     public string Type { get; set; } = "";
 
     public string Brand { get; set; } = "";
@@ -18,18 +19,28 @@ public abstract class Asset
 
     public string Currency { get; set; } = "";
 
+    public string SerialNumber { get; set; } = "";
+
+    public string? AssignedEmployee { get; set; }
+
+    public DateTime WarrantyExpirationDate { get; set; }
+
 
     // Constructor
     protected Asset()
     {
     }
     protected Asset(
-            string type,
-            string brand,
-            string model,
-            DateTime purchaseDate,
-            double priceUSD,
-            string office)
+        string type,
+        string brand,
+        string model,
+        DateTime purchaseDate,
+        double priceUSD,
+        string office,
+        string serialNumber,
+        DateTime warrantyExpirationDate,
+        string? assignedEmployee = null
+        )
 
     {
         Type = type;
@@ -38,6 +49,9 @@ public abstract class Asset
         PurchaseDate = purchaseDate;
         PriceUSD = priceUSD;
         Office = office;
+        SerialNumber = serialNumber;
+        WarrantyExpirationDate = warrantyExpirationDate;
+        AssignedEmployee = assignedEmployee;
 
         // Set currency depending on office
         switch (Office)
@@ -94,18 +108,18 @@ public abstract class Asset
         // Less than 3 months left
         if (daysLeft < 90)
         {
-            return "RED";
+            return "YELLOW";
         }
 
         // Less than 6 months left
         else if (daysLeft < 180)
         {
-            return "YELLOW";
+            return "RED";
         }
 
         else
         {
-            return "OK";
+            return "GREEN";
         }
     }
 
@@ -122,6 +136,9 @@ public abstract class Asset
             $"{(GetLocalPrice().ToString("0.00") + " " + Currency).PadRight(18)}" +
             $"{PurchaseDate.ToString("yyyy-MM-dd").PadRight(18)}" +
             $"{GetAssetAge().ToString().PadRight(8)}" +
+            $"{SerialNumber.PadRight(15)}" +
+            $"{(AssignedEmployee ?? "-").PadRight(20)}" +
+            $"{WarrantyExpirationDate.ToString("yyyy-MM-dd").PadRight(15)}" +
             $"{Status}";
     }
 
@@ -141,7 +158,7 @@ public abstract class Asset
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Green;
             }
 
             Console.WriteLine(asset);
@@ -162,14 +179,21 @@ public class Computer : Asset
         string model,
         DateTime purchaseDate,
         double priceUSD,
-        string office)
+        string office,
+        string serialNumber,
+        DateTime warrantyExpirationDate,
+        string? assignedEmployee = null)
         : base(
             "Computer",
             brand,
             model,
             purchaseDate,
             priceUSD,
-            office)
+            office,
+            serialNumber,
+            warrantyExpirationDate,
+            assignedEmployee
+            )
     {
     }
 }
@@ -185,14 +209,20 @@ public class MobilePhone : Asset
         string model,
         DateTime purchaseDate,
         double priceUSD,
-        string office)
+        string office,
+        string serialNumber,
+        DateTime warrantyExpirationDate,
+        string? assignedEmployee = null)
         : base(
             "Mobile Phone",
             brand,
             model,
             purchaseDate,
             priceUSD,
-            office)
+            office,
+            serialNumber,
+            warrantyExpirationDate,
+            assignedEmployee)
     {
     }
 }
