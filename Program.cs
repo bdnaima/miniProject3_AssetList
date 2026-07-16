@@ -46,48 +46,186 @@ while (running)
     }
 }
 
+
+// CRUD operations:
+
+// Show all assets
 static void ShowAssets(MyDbContext context)
 {
-    Console.WriteLine();
-    Console.WriteLine("Asset List");
-    Console.WriteLine("------------------------------------------------------------------------------------------------");
-
-    Console.Write("ID".PadRight(6));
-    Console.Write("Type".PadRight(15));
-    Console.Write("Brand".PadRight(15));
-    Console.Write("Model".PadRight(20));
-    Console.Write("Office".PadRight(12));
-    Console.Write("Price".PadRight(18));
-    Console.Write("Purchase Date".PadRight(18));
-    Console.Write("Age".PadRight(8));
-    Console.Write("Status".PadRight(10));
-    Console.Write("Serial".PadRight(15));
-    Console.Write("Employee".PadRight(20));
-    Console.Write("Warranty".PadRight(15));
-
-    Console.WriteLine();
-    Console.WriteLine("------------------------------------------------------------------------------------------------");
-
-
     var assets = context.Assets
-        .OrderBy(a => a.Office)
+        .OrderBy(a => a.Type)
         .ThenBy(a => a.PurchaseDate)
         .ToList();
 
-    Asset.ShowAllAssets(assets);
+    Console.WriteLine();
+    Console.WriteLine("==============================================================================================================");
+
+    Console.WriteLine(
+        $"{"ID",-4}" +
+        $"{"Type",-10}" +
+        $"{"Brand",-12}" +
+        $"{"Model",-18}" +
+        $"{"Office",-10}" +
+        $"{"Price",-17}" +
+        $"{"Status",-8}" +
+        $"{"Serial",-12}" +
+        $"{"Employee",-12}" +
+        $"{"Warranty",-12}");
+
+    Console.WriteLine("==============================================================================================================");
+
+    foreach (var asset in assets)
+    {
+        if (asset.Status == "RED")
+            Console.ForegroundColor = ConsoleColor.Red;
+        else if (asset.Status == "YELLOW")
+            Console.ForegroundColor = ConsoleColor.Yellow;
+        else
+            Console.ForegroundColor = ConsoleColor.White;
+
+        Console.WriteLine(asset);
+
+        Console.ResetColor();
+    }
 }
 
+// Show asset details
+static void ShowAssetDetails(MyDbContext context, int id)
+{
+    var asset = context.Assets.FirstOrDefault(a => a.AssetId == id);
+
+    if (asset == null)
+    {
+        Console.WriteLine("Asset not found.");
+        return;
+    }
+
+    if (asset.Status == "RED")
+        Console.ForegroundColor = ConsoleColor.Red;
+    else if (asset.Status == "YELLOW")
+        Console.ForegroundColor = ConsoleColor.Yellow;
+    else
+        Console.ForegroundColor = ConsoleColor.Green;
+
+    Console.WriteLine();
+    Console.WriteLine("========== ASSET DETAILS ==========");
+    Console.WriteLine($"ID:                 {asset.AssetId}");
+    Console.WriteLine($"Type:               {asset.Type}");
+    Console.WriteLine($"Brand:              {asset.Brand}");
+    Console.WriteLine($"Model:              {asset.Model}");
+    Console.WriteLine($"Office:             {asset.Office}");
+    Console.WriteLine($"Purchase Price:     {asset.PriceUSD} USD");
+    Console.WriteLine($"Local Price:        {asset.GetLocalPrice():0.00} {asset.Currency}");
+    Console.WriteLine($"Purchase Date:      {asset.PurchaseDate:yyyy-MM-dd}");
+    Console.WriteLine($"Warranty Expires:   {asset.WarrantyExpirationDate:yyyy-MM-dd}");
+    Console.WriteLine($"Serial Number:      {asset.SerialNumber}");
+    Console.WriteLine($"Employee:           {asset.AssignedEmployee ?? "-"}");
+    Console.WriteLine($"Status:             {asset.Status}");
+    Console.WriteLine("===================================");
+
+    Console.ResetColor();
+}
+
+// Add asset
 static void AddAsset(MyDbContext context)
 {
-    Console.WriteLine("Add asset selected");
+    Console.Write("Brand: ");
+    string brand = Console.ReadLine() ?? "";
+
+    Console.Write("Model: ");
+    string model = Console.ReadLine() ?? "";
+
+    Console.Write("Purchase year: ");
+    int year = int.Parse(Console.ReadLine()!);
+
+    Console.Write("Price USD: ");
+    double price = double.Parse(Console.ReadLine()!);
+
+    Console.Write("Office: ");
+    string office = Console.ReadLine() ?? "";
+
+    Console.Write("Serial number: ");
+    string serialNumber = Console.ReadLine() ?? "";
+
+    Console.Write("Warranty expiration year: ");
+    int warrantyYear = int.Parse(Console.ReadLine()!);
+
+    Console.Write("Assigned employee (optional): ");
+    string? employee = Console.ReadLine();
+
+
+    var asset = new Computer(
+        brand,
+        model,
+        new DateTime(year, 1, 1),
+        price,
+        office,
+        serialNumber,
+        new DateTime(warrantyYear, 1, 1),
+        employee
+    );
+
+    context.Assets.Add(asset);
+
+    context.SaveChanges();
+
+    Console.WriteLine("Asset added!");
 }
 
+// Update asset
 static void UpdateAsset(MyDbContext context)
 {
-    Console.WriteLine("Update asset selected");
+    Console.Write("Enter Asset ID: ");
+
+    int id = int.Parse(Console.ReadLine()!);
+
+
+    var asset = context.Assets
+        .FirstOrDefault(a => a.AssetId == id);
+
+
+    if (asset == null)
+    {
+        Console.WriteLine("Asset not found");
+        return;
+    }
+
+
+    Console.Write("New brand: ");
+    asset.Brand = Console.ReadLine() ?? "";
+
+
+    Console.Write("New model: ");
+    asset.Model = Console.ReadLine() ?? "";
+
+
+    context.SaveChanges();
+
+    Console.WriteLine("Asset updated");
 }
 
+// Delete asset
 static void DeleteAsset(MyDbContext context)
 {
-    Console.WriteLine("Delete asset selected");
+    Console.Write("Enter Asset ID: ");
+
+    int id = int.Parse(Console.ReadLine()!);
+
+
+    var asset = context.Assets
+        .FirstOrDefault(a => a.AssetId == id);
+
+
+    if (asset == null)
+    {
+        Console.WriteLine("Asset not found");
+        return;
+    }
+
+
+    context.Assets.Remove(asset);
+
+    context.SaveChanges();
+
+    Console.WriteLine("Asset deleted");
 }

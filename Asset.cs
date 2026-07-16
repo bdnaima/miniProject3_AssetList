@@ -118,7 +118,7 @@ public abstract class Asset
 
         else
         {
-            return "GREEN";
+            return "WHITE";
         }
     }
 
@@ -127,18 +127,16 @@ public abstract class Asset
     public override string ToString()
     {
         return
-            $"{AssetId.ToString().PadRight(6)}" +
-            $"{Type.PadRight(15)}" +
-            $"{Brand.PadRight(15)}" +
-            $"{Model.PadRight(20)}" +
-            $"{Office.PadRight(12)}" +
-            $"{(GetLocalPrice().ToString("0.00") + " " + Currency).PadRight(18)}" +
-            $"{PurchaseDate.ToString("yyyy-MM-dd").PadRight(18)}" +
-            $"{GetAssetAge().ToString().PadRight(8)}" +
-            $"{SerialNumber.PadRight(15)}" +
-            $"{(AssignedEmployee ?? "-").PadRight(20)}" +
-            $"{WarrantyExpirationDate.ToString("yyyy-MM-dd").PadRight(15)}" +
-            $"{Status}";
+            $"{AssetId,-4}" +
+            $"{Type,-10}" +
+            $"{Brand,-12}" +
+            $"{Model,-18}" +
+            $"{Office,-10}" +
+            $"{($"{GetLocalPrice():0.00} {Currency}"),-17}" +
+            $"{Status,-8}" +
+            $"{SerialNumber,-12}" +
+            $"{(AssignedEmployee ?? "-"),-12}" +
+            $"{WarrantyExpirationDate:yyyy-MM-dd}";
     }
 
 
@@ -147,17 +145,17 @@ public abstract class Asset
     {
         foreach (Asset asset in assets)
         {
-            if (asset.Status == "RED")
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-            }
-            else if (asset.Status == "YELLOW")
+            if (asset.Status == "YELLOW")
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
             }
+            else if (asset.Status == "RED")
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+            }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.White;
             }
 
             Console.WriteLine(asset);
