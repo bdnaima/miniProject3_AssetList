@@ -135,8 +135,8 @@ static void AddAsset(MyDbContext context)
     Console.Write("Model: ");
     string model = Console.ReadLine() ?? "";
 
-    Console.Write("Purchase year: ");
-    int year = int.Parse(Console.ReadLine()!);
+    Console.Write("Purchase date (yyyy-MM-dd): ");
+    DateTime purchaseDate = DateTime.Parse(Console.ReadLine()!);
 
     Console.Write("Price USD: ");
     double price = double.Parse(Console.ReadLine()!);
@@ -147,8 +147,8 @@ static void AddAsset(MyDbContext context)
     Console.Write("Serial number: ");
     string serialNumber = Console.ReadLine() ?? "";
 
-    Console.Write("Warranty expiration year: ");
-    int warrantyYear = int.Parse(Console.ReadLine()!);
+    Console.Write("Warranty expiration date (yyyy-MM-dd): ");
+    DateTime warrantyDate = DateTime.Parse(Console.ReadLine()!);
 
     Console.Write("Assigned employee (optional): ");
     string? employee = Console.ReadLine();
@@ -157,19 +157,20 @@ static void AddAsset(MyDbContext context)
     var asset = new Computer(
         brand,
         model,
-        new DateTime(year, 1, 1),
+        purchaseDate,
         price,
         office,
         serialNumber,
-        new DateTime(warrantyYear, 1, 1),
+        warrantyDate,
         employee
     );
 
     context.Assets.Add(asset);
 
     context.SaveChanges();
-
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("Asset added!");
+    Console.ResetColor();
 }
 
 // Update asset
@@ -186,7 +187,9 @@ static void UpdateAsset(MyDbContext context)
 
     if (asset == null)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Asset not found");
+        Console.ResetColor();
         return;
     }
 
@@ -200,8 +203,9 @@ static void UpdateAsset(MyDbContext context)
 
 
     context.SaveChanges();
-
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("Asset updated");
+    Console.ResetColor();
 }
 
 // Delete asset
@@ -218,7 +222,9 @@ static void DeleteAsset(MyDbContext context)
 
     if (asset == null)
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Asset not found");
+        Console.ResetColor();
         return;
     }
 
@@ -227,5 +233,7 @@ static void DeleteAsset(MyDbContext context)
 
     context.SaveChanges();
 
+    Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("Asset deleted");
+    Console.ResetColor();
 }
