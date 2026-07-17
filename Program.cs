@@ -89,7 +89,7 @@ static void ShowAssets(MyDbContext context)
         else if (asset.Status == "YELLOW")
             Console.ForegroundColor = ConsoleColor.Yellow;
         else
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Green;
 
         Console.WriteLine(asset);
 
@@ -360,15 +360,15 @@ static void TotalValuePerOffice(MyDbContext context)
     Console.WriteLine();
     Console.WriteLine("====== TOTAL VALUE PER OFFICE ======");
 
+    var assets = context.Assets.ToList();
 
-    var report = context.Assets
+    var report = assets
         .GroupBy(a => a.Office)
         .Select(g => new
         {
             Office = g.Key,
             TotalValue = g.Sum(a => a.GetLocalPrice())
         });
-
 
     foreach (var item in report)
     {
@@ -383,11 +383,10 @@ static void ExpiringAssets(MyDbContext context)
     Console.WriteLine();
     Console.WriteLine("====== EXPIRING ASSETS ======");
 
-
     var assets = context.Assets
+        .ToList()
         .Where(a => a.Status != "GREEN")
         .ToList();
-
 
     foreach (var asset in assets)
     {

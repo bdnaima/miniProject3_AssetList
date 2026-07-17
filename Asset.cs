@@ -208,7 +208,7 @@ public class MobilePhone : Asset
         DateTime warrantyExpirationDate,
         string? assignedEmployee = null)
         : base(
-            "Mobile Phone",
+            "Mobile",
             brand,
             model,
             purchaseDate,
