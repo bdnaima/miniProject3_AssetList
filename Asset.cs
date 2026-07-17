@@ -160,6 +160,29 @@ public abstract class Asset
             Console.ResetColor();
         }
     }
+
+    // Update currency based on office location
+    public void UpdateCurrency()
+    {
+        switch (Office)
+        {
+            case "Sweden":
+                Currency = "SEK";
+                break;
+
+            case "USA":
+                Currency = "USD";
+                break;
+
+            case "Germany":
+                Currency = "EUR";
+                break;
+
+            case "Turkey":
+                Currency = "TRY";
+                break;
+        }
+    }
 }
 
 public class Computer : Asset

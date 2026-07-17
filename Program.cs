@@ -97,43 +97,6 @@ static void ShowAssets(MyDbContext context)
     }
 }
 
-// Show asset details
-static void ShowAssetDetails(MyDbContext context, int id)
-{
-    var asset = context.Assets.FirstOrDefault(a => a.AssetId == id);
-
-    if (asset == null)
-    {
-        Console.WriteLine("Asset not found.");
-        return;
-    }
-
-    if (asset.Status == "RED")
-        Console.ForegroundColor = ConsoleColor.Red;
-    else if (asset.Status == "YELLOW")
-        Console.ForegroundColor = ConsoleColor.Yellow;
-    else
-        Console.ForegroundColor = ConsoleColor.Green;
-
-    Console.WriteLine();
-    Console.WriteLine("========== ASSET DETAILS ==========");
-    Console.WriteLine($"ID:                 {asset.AssetId}");
-    Console.WriteLine($"Type:               {asset.Type}");
-    Console.WriteLine($"Brand:              {asset.Brand}");
-    Console.WriteLine($"Model:              {asset.Model}");
-    Console.WriteLine($"Office:             {asset.Office}");
-    Console.WriteLine($"Purchase Price:     {asset.PriceUSD} USD");
-    Console.WriteLine($"Local Price:        {asset.GetLocalPrice():0.00} {asset.Currency}");
-    Console.WriteLine($"Purchase Date:      {asset.PurchaseDate:yyyy-MM-dd}");
-    Console.WriteLine($"Warranty Expires:   {asset.WarrantyExpirationDate:yyyy-MM-dd}");
-    Console.WriteLine($"Serial Number:      {asset.SerialNumber}");
-    Console.WriteLine($"Employee:           {asset.AssignedEmployee ?? "-"}");
-    Console.WriteLine($"Status:             {asset.Status}");
-    Console.WriteLine("===================================");
-
-    Console.ResetColor();
-}
-
 // Add asset
 static void AddAsset(MyDbContext context)
 {
@@ -168,6 +131,16 @@ static void AddAsset(MyDbContext context)
     Console.WriteLine("Germany");
     Console.WriteLine("Turkey");
     string office = Console.ReadLine() ?? "";
+
+    while (
+    office != "Sweden" &&
+    office != "USA" &&
+    office != "Germany" &&
+    office != "Turkey")
+    {
+        Console.WriteLine("Invalid office. Choose Sweden, USA, Germany or Turkey:");
+        office = Console.ReadLine() ?? "";
+    }
 
     Console.Write("Serial number: ");
     string serialNumber = Console.ReadLine() ?? "";
@@ -250,6 +223,8 @@ static void UpdateAsset(MyDbContext context)
 
     Console.Write("New office: ");
     asset.Office = Console.ReadLine() ?? asset.Office;
+
+    asset.UpdateCurrency();
 
     Console.Write("New price USD: ");
     if (double.TryParse(Console.ReadLine(), out double price))

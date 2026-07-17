@@ -29,6 +29,7 @@ public class MyDbContext : DbContext
                 new Computer
                 {
                     AssetId = 1001,
+                    Type = "Computer",
                     Brand = "Dell",
                     Model = "Latitude 5440",
                     PurchaseDate = new DateTime(2024, 1, 15),
@@ -42,6 +43,7 @@ public class MyDbContext : DbContext
                 new Computer
                 {
                     AssetId = 1002,
+                    Type = "Computer",
                     Brand = "Apple",
                     Model = "MacBook Pro M3",
                     PurchaseDate = new DateTime(2023, 6, 10),
@@ -58,6 +60,7 @@ public class MyDbContext : DbContext
             new MobilePhone
             {
                 AssetId = 1003,
+                Type = "Mobile",
                 Brand = "Samsung",
                 Model = "Galaxy S24",
                 PurchaseDate = new DateTime(2025, 2, 1),
@@ -67,6 +70,20 @@ public class MyDbContext : DbContext
                 SerialNumber = "SAM001",
                 AssignedEmployee = "Maria",
                 WarrantyExpirationDate = new DateTime(2027, 2, 1)
+            },
+            new MobilePhone
+            {
+                AssetId = 1004,
+                Type = "Mobile",
+                Brand = "Apple",
+                Model = "iPhone 15",
+                PurchaseDate = new DateTime(2025, 9, 1),
+                PriceUSD = 1200,
+                Office = "Turkey",
+                Currency = "TRY",
+                SerialNumber = "APPLE002",
+                AssignedEmployee = "Ahmet",
+                WarrantyExpirationDate = new DateTime(2028, 9, 1)
             }
         );
     }
