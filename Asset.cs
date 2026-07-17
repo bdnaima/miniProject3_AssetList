@@ -63,6 +63,10 @@ public abstract class Asset
                 Currency = "USD";
                 break;
 
+            case "Germany":
+                Currency = "EUR";
+                break;
+
             case "Turkey":
                 Currency = "TRY";
                 break;
@@ -77,6 +81,9 @@ public abstract class Asset
         {
             case "SEK":
                 return PriceUSD * 10.5;
+
+            case "EUR":
+                return PriceUSD * 0.92;
 
             case "TRY":
                 return PriceUSD * 32;
@@ -103,23 +110,13 @@ public abstract class Asset
         DateTime endOfLife = PurchaseDate.AddYears(3);
 
         double daysLeft = (endOfLife - DateTime.Now).TotalDays;
-
-        // Less than 3 months left
         if (daysLeft < 90)
-        {
-            return "YELLOW";
-        }
-
-        // Less than 6 months left
-        else if (daysLeft < 180)
-        {
             return "RED";
-        }
 
-        else
-        {
-            return "WHITE";
-        }
+        if (daysLeft < 180)
+            return "YELLOW";
+
+        return "GREEN";
     }
 
 
@@ -145,17 +142,17 @@ public abstract class Asset
     {
         foreach (Asset asset in assets)
         {
-            if (asset.Status == "YELLOW")
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-            }
-            else if (asset.Status == "RED")
+            if (asset.Status == "RED")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
             }
+            else if (asset.Status == "YELLOW")
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+            }
             else
             {
-                Console.ForegroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Green;
             }
 
             Console.WriteLine(asset);

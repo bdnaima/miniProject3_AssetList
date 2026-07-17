@@ -12,7 +12,9 @@ while (running)
     Console.WriteLine("2. Add asset");
     Console.WriteLine("3. Update asset");
     Console.WriteLine("4. Delete asset");
-    Console.WriteLine("5. Exit");
+    Console.WriteLine("5. Show reports");
+    Console.WriteLine("6. Exit");
+
 
     Console.Write("Choose option: ");
 
@@ -37,11 +39,17 @@ while (running)
             break;
 
         case "5":
+            ShowReports(context);
+            break;
+
+        case "6":
             running = false;
             break;
 
         default:
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Invalid choice");
+            Console.ResetColor();
             break;
     }
 }
@@ -129,6 +137,11 @@ static void ShowAssetDetails(MyDbContext context, int id)
 // Add asset
 static void AddAsset(MyDbContext context)
 {
+    Console.WriteLine("Choose asset type:");
+    Console.WriteLine("1. Computer");
+    Console.WriteLine("2. Mobile");
+
+    string? typeChoice = Console.ReadLine();
     Console.Write("Brand: ");
     string brand = Console.ReadLine() ?? "";
 
@@ -136,34 +149,66 @@ static void AddAsset(MyDbContext context)
     string model = Console.ReadLine() ?? "";
 
     Console.Write("Purchase date (yyyy-MM-dd): ");
-    DateTime purchaseDate = DateTime.Parse(Console.ReadLine()!);
+    if (!DateTime.TryParse(Console.ReadLine(), out DateTime purchaseDate))
+    {
+        Console.WriteLine("Invalid date. Include in this format: yyyy-MM-dd");
+        return;
+    }
 
     Console.Write("Price USD: ");
-    double price = double.Parse(Console.ReadLine()!);
+    if (!double.TryParse(Console.ReadLine(), out double price))
+    {
+        Console.WriteLine("Invalid price.");
+        return;
+    }
 
     Console.Write("Office: ");
+    Console.WriteLine("Sweden");
+    Console.WriteLine("USA");
+    Console.WriteLine("Germany");
+    Console.WriteLine("Turkey");
     string office = Console.ReadLine() ?? "";
 
     Console.Write("Serial number: ");
     string serialNumber = Console.ReadLine() ?? "";
 
     Console.Write("Warranty expiration date (yyyy-MM-dd): ");
-    DateTime warrantyDate = DateTime.Parse(Console.ReadLine()!);
+    if (!DateTime.TryParse(Console.ReadLine(), out DateTime warrantyDate))
+    {
+        Console.WriteLine("Invalid warranty date. Include in this format: yyyy-MM-dd");
+        return;
+    }
 
     Console.Write("Assigned employee (optional): ");
     string? employee = Console.ReadLine();
 
 
-    var asset = new Computer(
-        brand,
-        model,
-        purchaseDate,
-        price,
-        office,
-        serialNumber,
-        warrantyDate,
-        employee
-    );
+    Asset asset;
+
+    if (typeChoice == "2")
+    {
+        asset = new MobilePhone(
+            brand,
+            model,
+            purchaseDate,
+            price,
+            office,
+            serialNumber,
+            warrantyDate,
+            employee);
+    }
+    else
+    {
+        asset = new Computer(
+            brand,
+            model,
+            purchaseDate,
+            price,
+            office,
+            serialNumber,
+            warrantyDate,
+            employee);
+    }
 
     context.Assets.Add(asset);
 
@@ -178,7 +223,11 @@ static void UpdateAsset(MyDbContext context)
 {
     Console.Write("Enter Asset ID: ");
 
-    int id = int.Parse(Console.ReadLine()!);
+    if (!int.TryParse(Console.ReadLine(), out int id))
+    {
+        Console.WriteLine("Invalid ID.");
+        return;
+    }
 
 
     var asset = context.Assets
@@ -213,7 +262,11 @@ static void DeleteAsset(MyDbContext context)
 {
     Console.Write("Enter Asset ID: ");
 
-    int id = int.Parse(Console.ReadLine()!);
+    if (!int.TryParse(Console.ReadLine(), out int id))
+    {
+        Console.WriteLine("Invalid ID.");
+        return;
+    }
 
 
     var asset = context.Assets
@@ -236,4 +289,125 @@ static void DeleteAsset(MyDbContext context)
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("Asset deleted");
     Console.ResetColor();
+}
+
+// Reports
+static void ShowReports(MyDbContext context)
+{
+    Console.WriteLine();
+    Console.WriteLine("========== REPORTS ==========");
+    Console.WriteLine();
+
+    Console.WriteLine("1. Asset count per office");
+    Console.WriteLine("2. Total value per office");
+    Console.WriteLine("3. Assets close to expiration");
+    Console.WriteLine("4. Most expensive assets");
+
+    Console.Write("Choose report: ");
+
+    string? choice = Console.ReadLine();
+
+
+    switch (choice)
+    {
+        case "1":
+            AssetCountPerOffice(context);
+            break;
+
+        case "2":
+            TotalValuePerOffice(context);
+            break;
+
+        case "3":
+            ExpiringAssets(context);
+            break;
+
+        case "4":
+            MostExpensiveAssets(context);
+            break;
+
+        default:
+            Console.WriteLine("Invalid choice");
+            break;
+    }
+}
+
+// Asset count per office
+static void AssetCountPerOffice(MyDbContext context)
+{
+    Console.WriteLine();
+    Console.WriteLine("====== ASSET COUNT PER OFFICE ======");
+
+
+    var report = context.Assets
+        .GroupBy(a => a.Office)
+        .Select(g => new
+        {
+            Office = g.Key,
+            Count = g.Count()
+        });
+
+
+    foreach (var item in report)
+    {
+        Console.WriteLine($"{item.Office}: {item.Count} assets");
+    }
+}
+
+// Total value per office
+static void TotalValuePerOffice(MyDbContext context)
+{
+    Console.WriteLine();
+    Console.WriteLine("====== TOTAL VALUE PER OFFICE ======");
+
+
+    var report = context.Assets
+        .GroupBy(a => a.Office)
+        .Select(g => new
+        {
+            Office = g.Key,
+            TotalValue = g.Sum(a => a.GetLocalPrice())
+        });
+
+
+    foreach (var item in report)
+    {
+        Console.WriteLine(
+            $"{item.Office}: {item.TotalValue:0.00}");
+    }
+}
+
+// Expiring assets
+static void ExpiringAssets(MyDbContext context)
+{
+    Console.WriteLine();
+    Console.WriteLine("====== EXPIRING ASSETS ======");
+
+
+    var assets = context.Assets
+        .Where(a => a.Status != "GREEN")
+        .ToList();
+
+
+    foreach (var asset in assets)
+    {
+        Console.WriteLine(
+            $"{asset.Brand} {asset.Model} - {asset.Status}");
+    }
+}
+
+static void MostExpensiveAssets(MyDbContext context)
+{
+    Console.WriteLine();
+    Console.WriteLine("====== MOST EXPENSIVE ASSETS ======");
+
+    var assets = context.Assets
+        .OrderByDescending(a => a.PriceUSD)
+        .Take(5)
+        .ToList();
+
+    foreach (var asset in assets)
+    {
+        Console.WriteLine(asset);
+    }
 }
