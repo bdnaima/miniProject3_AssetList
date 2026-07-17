@@ -225,14 +225,14 @@ static void UpdateAsset(MyDbContext context)
 
     if (!int.TryParse(Console.ReadLine(), out int id))
     {
+        Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Invalid ID.");
+        Console.ResetColor();
         return;
     }
 
-
     var asset = context.Assets
         .FirstOrDefault(a => a.AssetId == id);
-
 
     if (asset == null)
     {
@@ -242,16 +242,32 @@ static void UpdateAsset(MyDbContext context)
         return;
     }
 
-
     Console.Write("New brand: ");
-    asset.Brand = Console.ReadLine() ?? "";
-
+    asset.Brand = Console.ReadLine() ?? asset.Brand;
 
     Console.Write("New model: ");
-    asset.Model = Console.ReadLine() ?? "";
+    asset.Model = Console.ReadLine() ?? asset.Model;
 
+    Console.Write("New office: ");
+    asset.Office = Console.ReadLine() ?? asset.Office;
+
+    Console.Write("New price USD: ");
+    if (double.TryParse(Console.ReadLine(), out double price))
+    {
+        asset.PriceUSD = price;
+    }
+
+    Console.Write("New assigned employee: ");
+    asset.AssignedEmployee = Console.ReadLine();
+
+    Console.Write("New warranty expiration date (yyyy-MM-dd): ");
+    if (DateTime.TryParse(Console.ReadLine(), out DateTime warrantyDate))
+    {
+        asset.WarrantyExpirationDate = warrantyDate;
+    }
 
     context.SaveChanges();
+
     Console.ForegroundColor = ConsoleColor.Green;
     Console.WriteLine("Asset updated");
     Console.ResetColor();
